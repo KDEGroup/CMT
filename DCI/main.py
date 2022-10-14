@@ -1,5 +1,5 @@
 import argparse, os, sys
-sys.path.append("/home/zqxu/MHTGNN/code/")
+sys.path.append("XXX")
 
 from time import time
 import torch
@@ -31,7 +31,7 @@ log = Logging(log_path)
 parser = argparse.ArgumentParser(description='PyTorch deep cluster infomax')
 parser.add_argument('--dataset', type=str, default="Xinye",
                     help='name of dataset (default: wiki)')
-parser.add_argument('--path', type=str, default="/home/zqxu/MHTGNN/model_save/",
+parser.add_argument('--path', type=str, default="XXX",
                     help='path of dataset')
 parser.add_argument('--device', type=int, default=0,
                     help='which gpu to use if any (default: 0)')
@@ -80,7 +80,7 @@ def preprocess_neighbors_sumavepool(edge_index, nb_nodes, device):
     return adj.to(device)
 
 def loadXinyeData():
-    graph_data = np.load("/home/zqxu/MHTGNN/data/phase1_gdata.npz")
+    graph_data = np.load("XXX/phase1_gdata.npz")
     edge_index = graph_data['edge_index']
     feats = graph_data['x']
     nb_nodes = feats.shape[0]
@@ -88,7 +88,7 @@ def loadXinyeData():
     # users = np.array([i for i in range(nb_nodes)]).reshape(-1, 1)
     # labels = np.concatenate((users, labels), axis=1)
 
-    with open("/home/zqxu/MHTGNN/data/u_train_test_Xinye.pickle", "rb") as fp:
+    with open("XXX/u_train_test_Xinye.pickle", "rb") as fp:
         X_train_p, X_train_n, X_test_p, X_test_n = pickle.load(fp)
     train_user_idx = X_train_p + X_train_n
     test_user_idx = X_test_p + X_test_n
@@ -288,7 +288,7 @@ def main():
         if results[0] > bestauc:
             bestepoch = finetune_epoch
             bestauc = results[0]
-            torch.save(model.state_dict(), '/home/zqxu/MHTGNN/model_save/DCI_Xinye_params.pth')
+            torch.save(model.state_dict(), 'XXX/DCI_Xinye_params.pth')
 
     log.record("Best Epoch[%d] Best AUC Score[%.4f]" % (bestepoch, bestauc))
 

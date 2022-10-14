@@ -14,7 +14,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 def loadXinyeDataHomo():
-    graph_data = np.load("/home/zqxu/MHTGNN/data/phase1_gdata.npz")
+    graph_data = np.load("XXX/phase1_gdata.npz")
     x = graph_data['x']
     # x[x==-1] = np.nan
     # col_mean = np.nanmean(x, axis=0)
@@ -33,7 +33,7 @@ def loadXinyeDataHomo():
     graph = dgl.add_self_loop(graph)
     graph.ndata['feature'] = torch.FloatTensor(x)
 
-    with open("/home/zqxu/MHTGNN/data/u_train_test_Xinye.pickle", "rb") as fp:
+    with open("/XXX/u_train_test_Xinye.pickle", "rb") as fp:
         X_train_p, X_train_n, X_test_p, X_test_n = pickle.load(fp)
 
     train_user_idx = X_train_p + X_train_n
@@ -54,7 +54,7 @@ def loadXinyeDataHomo():
     return [graph_train, graph], n_homo_features, train_user_idx, test_user_idx, label
 
 def loadXinyeDataHetero():
-    graph_data = np.load("/home/zqxu/MHTGNN/data/phase1_gdata.npz")
+    graph_data = np.load("XXX/phase1_gdata.npz")
     x = graph_data['x']
     # x[x==-1] = np.nan
     # col_mean = np.nanmean(x, axis=0)
@@ -124,7 +124,7 @@ def loadXinyeDataHetero():
     fraud_user = set(np.where(y==1)[0].tolist())
     normal_user = set(np.where(y==0)[0].tolist())
 
-    with open("/home/zqxu/MHTGNN/data/u_train_test_Xinye.pickle", "rb") as fp:
+    with open("XXX/u_train_test_Xinye.pickle", "rb") as fp:
         X_train_p, X_train_n, X_test_p, X_test_n = pickle.load(fp)
 
     train_user_idx = X_train_p + X_train_n
@@ -151,14 +151,14 @@ def loadXinyeDataHetero():
     return [hg_train, hg], n_hetero_features, train_user_idx, test_user_idx, label
 
 def loadXinyeDataHomoDynamic():
-    graph_data = np.load("/home/zqxu/MHTGNN/data/phase1_gdata.npz")
+    graph_data = np.load("XXX/phase1_gdata.npz")
     edge_index = graph_data['edge_index']
     edge_timestamp = graph_data['edge_timestamp']
     gap = math.ceil(max(edge_timestamp) / 7)
     for i in range(1, 8):
         edge_timestamp[(edge_timestamp >= (i-1)*gap)&(edge_timestamp < i*gap)] = i
 
-    with open("/home/zqxu/MHTGNN/data/u_train_test_Xinye.pickle", "rb") as fp:
+    with open("XXX/u_train_test_Xinye.pickle", "rb") as fp:
         X_train_p, X_train_n, X_test_p, X_test_n = pickle.load(fp)
 
     train_user_idx = X_train_p + X_train_n
@@ -171,7 +171,7 @@ def loadXinyeDataHomoDynamic():
     return train_user_idx, test_user_idx, edges
 
 def loadXinyeDataHeteroDynamic():
-    graph_data = np.load("/home/zqxu/MHTGNN/data/phase1_gdata.npz")
+    graph_data = np.load("XXX/phase1_gdata.npz")
     x = graph_data['x']
     y = graph_data['y']
     label = torch.FloatTensor(y)
@@ -186,7 +186,7 @@ def loadXinyeDataHeteroDynamic():
         edge_timestamp[(edge_timestamp >= (i-1)*gap)&(edge_timestamp < i*gap)] = i
     n_hetero_features = x.shape[1]
 
-    with open("/home/zqxu/MHTGNN/data/u_train_test_Xinye.pickle", "rb") as fp:
+    with open("XXX/u_train_test_Xinye.pickle", "rb") as fp:
         X_train_p, X_train_n, X_test_p, X_test_n = pickle.load(fp)
 
     train_user_idx = X_train_p + X_train_n
@@ -222,7 +222,7 @@ def loadXinyeDataHeteroDynamic():
     return hg, x, n_hetero_features, train_user_idx, test_user_idx, edges, label
 
 def user_seq_construct():
-    graph_data = np.load("/home/zqxu/MHTGNN/data/phase1_gdata.npz")
+    graph_data = np.load("XXX/phase1_gdata.npz")
     edge_index = graph_data['edge_index']
     edge_timestamp = graph_data['edge_timestamp']
     gap = math.ceil(max(edge_timestamp) / 14)
@@ -245,7 +245,7 @@ def user_seq_construct():
     #  去除每个用户中不存在交互记录的时间点
     for i in tqdm(range(len(user_seq))):
         user_seq[i] = [x for x in user_seq[i] if len(x) > 0]
-    with open('/home/zqxu/MHTGNN/data/user_relation_seq.pickle', 'wb') as f:
+    with open('XXX/user_relation_seq.pickle', 'wb') as f:
         pickle.dump(user_seq, f)    
     #  每个用户出现在其他用户的交互序列中的位置, 以及对应的子序列的长度
     #  例子：1->[6,2,5,7,3,19], 则user_appear_location[5]={"0": {2, 4}}
@@ -259,7 +259,7 @@ def user_seq_construct():
                 for user in users:
                     # t->[0, len(seq)-1]
                     user_appear_location[user][i] = [t, len(seq)-t]
-    with open('/home/zqxu/MHTGNN/data/user_appear_location.pickle', 'wb') as f:
+    with open('XXX/user_appear_location.pickle', 'wb') as f:
         pickle.dump(user_appear_location, f)
 
     sample_num = 1
@@ -273,7 +273,7 @@ def user_seq_construct():
             # dfs(constructed_seq, sample_seq, seq, 0, 0, sample_num, len(seq))
             sample_sequence(constructed_seq=constructed_seq, seq=seq, offset=0, sample_num=sample_num)
             sampled_user_seq[i] = constructed_seq
-    with open('/home/zqxu/MHTGNN/data/sampled_user_seq.pickle', 'wb') as f:
+    with open('XXX/sampled_user_seq.pickle', 'wb') as f:
         pickle.dump(sampled_user_seq, f)
 
     for i in tqdm(range(len(sampled_user_seq))):
@@ -292,10 +292,10 @@ def user_seq_construct():
             # dfs(constructed_seq, sample_seq, seq, offset=start_position+1, i=start_position+1, sample_num=sample_num, sample_len=seq_len)
             sample_sequence(constructed_seq=constructed_seq, seq=seq, offset=start_position+1, sample_num=sample_num)
             sampled_user_seq[i] = constructed_seq
-    with open('/home/zqxu/MHTGNN/data/sampled_user_seq_complete.pickle', 'wb') as f:
+    with open('XXX/sampled_user_seq_complete.pickle', 'wb') as f:
         pickle.dump(sampled_user_seq, f) 
 
-    with open('/home/zqxu/MHTGNN/data/sampled_user_seq_complete.pickle', 'rb') as f:
+    with open('XXX/sampled_user_seq_complete.pickle', 'rb') as f:
         transformed_user_seq = pickle.load(f)
     uf = torch.FloatTensor(x)
     num_nodes = len(transformed_user_seq)
@@ -309,7 +309,7 @@ def user_seq_construct():
             # else:
             #     input = torch.zeros(1, 17)
                 user_constructed_seq_input[i].append(input)
-    with open('/home/zqxu/MHTGNN/data/user_relation_seq_input.pickle', 'wb') as f:
+    with open('XXX/user_relation_seq_input.pickle', 'wb') as f:
         pickle.dump(user_constructed_seq_input, f) 
 
 def sample_sequence(constructed_seq, seq, offset, sample_num):
@@ -331,7 +331,7 @@ def dfs(constructed_seq, sample_seq, seq, offset, i, sample_num, sample_len):
             sample_seq.pop(len(sample_seq) - 1)
 
 def node_augment_construct():
-    path = "/home/zqxu/MHTGNN/data/"
+    path = "XXX/data/"
     with open(path + 'user_relation_seq.pickle', 'rb') as f:
         user_seq = pickle.load(f)
     
@@ -362,7 +362,7 @@ def node_augment_construct():
         pickle.dump(node_augment_hash, f)
 
 def edges_examine():
-    graph_data = np.load("/home/zqxu/MHTGNN/data/phase1_gdata.npz")
+    graph_data = np.load("XXX/phase1_gdata.npz")
     x = graph_data['x']
     edge_index = graph_data['edge_index']
     edge_index = pd.DataFrame(edge_index, columns=['src', 'dst'])

@@ -2,7 +2,7 @@
 import os, argparse
 import sys
 
-sys.path.append("/home/zqxu/MHTGNN/code/")
+sys.path.append("XXX")
 
 from Utils import set_seed, Logging
 from Metrics import *
@@ -22,7 +22,7 @@ from tqdm import tqdm
 import random
 import torch.optim
 
-log_dir = "/home/zqxu/MHTGNN/log"
+log_dir = "XXX"
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 log_path = os.path.join(log_dir, 'Addgraph_hetero.log')
@@ -39,7 +39,7 @@ parser.add_argument("--agg_fn", type=str, default='mean', help="Aggregation func
 parser.add_argument("--agg_room", type=str, default='mean', help="Aggregation for room feature definition")
 parser.add_argument("--w", type=int, default=3, help="Historical windows size")
 parser.add_argument("--batch_size", type=int, default=1024*8, help="Batch size")
-parser.add_argument("--path", type=str, default="/home/zqxu/MHTGNN/data/", help="Dataset path")
+parser.add_argument("--path", type=str, default="XXX", help="Dataset path")
 
 args = parser.parse_args()
 log.record(args)
@@ -70,7 +70,6 @@ class RGCN(nn.Module):
         h = self.conv2(blocks[1], h)['user']
         return h
 
-# borrowed from https://github.com/dmlc/dgl/blob/306e0a46e182f3bf3bea717688ed82224c121276/examples/pytorch/han/model_hetero.py#L17
 class SemanticAttention(nn.Module):
     def __init__(self, in_size, hidden_size=128):
         super(SemanticAttention, self).__init__()
@@ -317,7 +316,7 @@ def run():
                 if t == timespan and results[0] > bestauc:
                     bestepoch = epoch
                     bestauc = results[0]
-                    torch.save(model.state_dict(), '/home/zqxu/MHTGNN/model_save/AddGraph_H_Xinye_params.pth')
+                    torch.save(model.state_dict(), 'XXX')
 
                 H_list = torch.cat([H_list, Ht.unsqueeze(0)], dim=0)
 

@@ -17,7 +17,7 @@ from Metrics import *
 import warnings
 warnings.filterwarnings("ignore")
 
-log_dir = "/home/zqxu/MHTGNN/log"
+log_dir = "XXX"
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 log_path = os.path.join(log_dir, 'TFEncoder_tss.log')
@@ -30,8 +30,8 @@ parser.add_argument("--batch_size", type=int, default=1024*4)
 parser.add_argument("--lr", type=float, default=1e-3, help="Learning rate")
 parser.add_argument("--weight_decay", type=float, default=1e-2, help="Weight decay for regularization")
 parser.add_argument("--epochs", type=int, default=25, help="Epochs for training")
-parser.add_argument("--path", type=str, default="/home/zqxu/MHTGNN/data/", help="Dataset path")
-parser.add_argument("--data", type=str, default="/home/zqxu/MHTGNN/data/embedding/IHG_Xinye_pretrain_embed.pt", help="Dataset")
+parser.add_argument("--path", type=str, default="XXX", help="Dataset path")
+parser.add_argument("--data", type=str, default="XXX", help="Dataset")
 
 args = parser.parse_args()
 log.record(args)
@@ -215,7 +215,7 @@ def run():
             if results[0] > bestauc:
                 bestauc = results[0]
                 bestepoch = epoch
-                torch.save(model.state_dict(), '/home/zqxu/MHTGNN/model_save/TFEncoder_tss_params.pth')
+                torch.save(model.state_dict(), 'XXX')
 
             t1 = time()
             log.record("Epoch: %d, Test Loss: %.2f, AUC: %.4f, KS: %.4f, PRE: %.4f, RECALL: %.4f F1:%.4f, ACC: %.4f, Time: %.1f" % (
@@ -234,12 +234,12 @@ def get_embed():
     embed_table = torch.zeros(trainset.num_nodes, args.hid_dim)
 
     model = TFEncoderClassifier(trainset.feat_dim, args.hid_dim, trainset.time_span, args.batch_size, args.n_layers)
-    model.load_state_dict(torch.load('/home/zqxu/MHTGNN/model_save/TFEncoder_tss_params.pth'))
+    model.load_state_dict(torch.load('XXX.pth'))
     with torch.no_grad():
         for _, (idx, embeds) in enumerate(tqdm(pretrainloader)):
             h = model(embeds, encode=True)
             embed_table[idx] = h
-    torch.save(embed_table, "/home/zqxu/MHTGNN/data/embedding/tfencoder_Xinye_tss_embed.pt")
+    torch.save(embed_table, "XXX/tfencoder_Xinye_tss_embed.pt")
 
 if __name__ == '__main__':   
     run()

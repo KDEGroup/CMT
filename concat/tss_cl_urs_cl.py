@@ -2,7 +2,7 @@
 import os, argparse
 import sys
 
-sys.path.append("/home/zqxu/MHTGNN/code")
+sys.path.append("XXX")
 
 from Utils import *
 from Metrics import *
@@ -11,19 +11,21 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import dgl, dgl.nn.pytorch.conv, dgl.nn.pytorch.hetero
+from matplotlib import pyplot as plt
+from sklearn.manifold import TSNE
 import dgl.function as fn
 import numpy as np
 from tqdm import tqdm
-from time import time
+from time import sleep, time
 import torch.optim
 
 import warnings
 warnings.filterwarnings("ignore")
 
-log_dir = "/home/zqxu/MHTGNN/log"
+log_dir = "XXX"
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
-log_path = os.path.join(log_dir, 'concat_tss_rs_cl.log')
+log_path = os.path.join(log_dir, 'concat_tss_cl_urs_cl.log')
 log = Logging(log_path)
 
 parser = argparse.ArgumentParser(description='RGCN')
@@ -35,7 +37,7 @@ parser.add_argument("--epochs", type=int, default=50, help="Epochs for training"
 parser.add_argument("--agg_fn", type=str, default='stack', help="Aggregation function for RGCN")
 parser.add_argument("--agg_room", type=str, default='mean', help="Aggregation for room feature definition")
 parser.add_argument("--model", type=str, default='IG_RGCN', help="Model name RGCN/IG_RGCN")
-parser.add_argument("--path", type=str, default="/home/zqxu/MHTGNN/data/", help="Dataset path")
+parser.add_argument("--path", type=str, default="XXX", help="Dataset path")
 
 args = parser.parse_args()
 log.record(args)
@@ -79,7 +81,7 @@ class IG_RGCN(nn.Module):
             nn.Sigmoid()
         )
 
-    def forward(self, blocks, x):
+    def forward(self, blocks, x, labels=None):
         # inputs are features of nodes
         user_original_feature = self.embed(x['user'])
         user_tss_feature = self.tss_embed[blocks[0].srcdata[dgl.NID]]
@@ -103,6 +105,26 @@ class IG_RGCN(nn.Module):
                 user_rs_feature
             ], dim=1)      
         h = self.attn(self.conv2(blocks[1], h)['user'])
+
+        if labels is not None:
+            labels = labels.tolist()
+            labels = np.array(labels)
+            pos_index = np.where(labels == 1)[0]
+            neg_index = np.where(labels == 0)[0]
+            pos = h[pos_index, :].detach().numpy()
+            neg = h[neg_index, :].detach().numpy()
+            tsne = TSNE(n_components=2, init='pca', random_state=42)
+            result_positive = tsne.fit_transform(pos[:200])
+            result_negative = tsne.fit_transform(neg[:2000])
+            plt.scatter(result_positive[:, 0], result_positive[:, 1], marker='o', c='crimson', s=20)
+            plt.scatter(result_negative[:, 0], result_negative[:, 1], marker='o', c='lightseagreen', s=20)
+            plt.xlabel('X')
+            plt.ylabel('Y')
+            plt.tight_layout()
+            plt.savefig("/home/zqxu/MHTGNN/pic/TSNE.png", dpi=300)
+            plt.close()
+            sleep(10)
+
         h = self.predict(h)
 
         return h
@@ -131,13 +153,16 @@ class IGConv(nn.Module):
 def run():
     set_seed(42)
     hetero_graph, n_hetero_features, train_user_idx, test_user_idx, label = loadXinyeDataHetero()
-    tss_embed = torch.load("/home/zqxu/MHTGNN/data/embedding/tfencoder_Xinye_tss_embed.pt")
-    rs_embed = torch.load("/home/zqxu/MHTGNN/data/embedding/tfencoder_Xinye_rs_Npair_embed.pt")
+    tss_embed = torch.load("XXX/tfencoder_Xinye_tss_Npair_embed.pt")
+    rs_embed = torch.load("XXX/tfencoder_Xinye_rs_Npair_embed.pt")
     model = IG_RGCN(tss_embed, rs_embed, n_hetero_features, args.hid_dim, hetero_graph[1].etypes, args.agg_fn)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     criterion = nn.BCELoss(reduction='sum')
 
-    sampler = dgl.dataloading.MultiLayerFullNeighborSampler(2)
+    fanouts = '5, 10'
+    fanouts= [int(i) for i in fanouts.split(',')]
+    sampler = dgl.dataloading.MultiLayerNeighborSampler(fanouts)
+    # sampler = dgl.dataloading.MultiLayerFullNeighborSampler(2)
     dataloader_train = dgl.dataloading.NodeDataLoader(hetero_graph[0], {'user': train_user_idx}, sampler, batch_size=args.batch_size, shuffle=True, drop_last=False)
     dataloader_test = dgl.dataloading.NodeDataLoader(hetero_graph[1], {'user': test_user_idx}, sampler, batch_size=args.batch_size, shuffle=False, drop_last=False)
     bestauc = 0.0
@@ -195,7 +220,7 @@ def run():
             if results[0] > bestauc:
                 bestauc = results[0]
                 bestepoch = epoch
-                torch.save(model.state_dict(), "/home/zqxu/MHTGNN/model_save/IHG_tss_rs_cl_prarams.pth")
+                torch.save(model.state_dict(), "/home/zqxu/MHTGNN/model_save/IHG_tss_cl_rs_cl_%.4f_prarams.pth" % bestauc)
 
     log.record("Best Epoch[%d] Best AUC Score[%.4f]" % (bestepoch, bestauc))
 

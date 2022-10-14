@@ -1,6 +1,6 @@
 # coding=utf-8
 import os, sys, argparse
-sys.path.append("/home/zqxu/MHTGNN/code")
+sys.path.append("XXX")
 
 from time import time
 import torch
@@ -25,7 +25,7 @@ from sklearn.decomposition import PCA
 import warnings
 warnings.filterwarnings("ignore")
 
-log_dir = "/home/zqxu/MHTGNN/log"
+log_dir = "XXX"
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 log_path = os.path.join(log_dir, 'Contrastive_tss.log')
@@ -39,9 +39,9 @@ parser.add_argument("--lr", type=float, default=1e-3, help="Learning rate")
 parser.add_argument("--beta", type=float, default=0.4, help="Ratio for shuffling sub sequences")
 parser.add_argument("--weight_decay", type=float, default=1e-2, help="Weight decay for regularization")
 parser.add_argument("--epochs", type=int, default=25, help="Epochs for training")
-parser.add_argument("--path", type=str, default="/home/zqxu/MHTGNN/data/", help="Dataset path")
+parser.add_argument("--path", type=str, default="XXX", help="Dataset path")
 parser.add_argument("--pos_embed", type=bool, default=False, help="Whether to use position embedding")
-parser.add_argument("--data", type=str, default="/home/zqxu/MHTGNN/data/embedding/IHG_Xinye_pretrain_embed.pt", help="Dataset")
+parser.add_argument("--data", type=str, default="XXX/IHG_Xinye_pretrain_embed.pt", help="Dataset")
 
 args = parser.parse_args()
 log.record(args)
@@ -52,7 +52,7 @@ class SnapshotDataset(Dataset):
         # shape: [timespan, num_nodes, feat_dim] -> [num_nodes, timespan, feat_dim]
         embed_table = torch.load(args.data)
         embed_table = torch.transpose(embed_table, dim0=0, dim1=1)
-        with open("/home/zqxu/MHTGNN/data/u_train_test_Xinye.pickle", "rb") as fp:
+        with open("XXX/u_train_test_Xinye.pickle", "rb") as fp:
             X_train_p, X_train_n, X_test_p, X_test_n = pickle.load(fp)
         X_train = X_train_p + X_train_n
         X_test = X_test_p + X_test_n
@@ -356,7 +356,7 @@ def run():
             if results[0] > bestauc:
                 bestauc = results[0]
                 bestepoch = epoch
-                torch.save(model.state_dict(), '/home/zqxu/MHTGNN/model_save/TFEncoder_tss_Npair_params.pth')
+                torch.save(model.state_dict(), 'XXX/TFEncoder_tss_Npair_params.pth')
 
             t1 = time()
             log.record("Epoch: %d, Test Loss: %.2f, AUC: %.4f, KS: %.4f, PRE: %.4f, RECALL: %.4f F1:%.4f, ACC: %.4f, Time: %.1f" % (
@@ -374,12 +374,12 @@ def get_embed():
     embed_table = torch.empty(trainset.num_nodes, args.hid_dim)
 
     model = MHTGNN(trainset.feat_dim, trainset.time_span, args.hid_dim, args.n_layers, args.batch_size)
-    model.load_state_dict(torch.load('/home/zqxu/MHTGNN/model_save/TFEncoder_tss_Npair_params.pth'))
+    model.load_state_dict(torch.load('XXX/TFEncoder_tss_Npair_params.pth'))
     with torch.no_grad():
         for _, (idx, input_seqs) in enumerate(tqdm(pretrainloader)):
             h = model.get_embed(input_seqs)
             embed_table[idx] = h
-    torch.save(embed_table, "/home/zqxu/MHTGNN/data/embedding/tfencoder_Xinye_tss_Npair_embed.pt")
+    torch.save(embed_table, "XXX/tfencoder_Xinye_tss_Npair_embed.pt")
 
 if __name__ == '__main__':   
     run()

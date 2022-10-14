@@ -20,7 +20,7 @@ from sklearn.model_selection import train_test_split
 import warnings
 warnings.filterwarnings("ignore")
 
-log_dir = "/home/zqxu/MHTGNN/log"
+log_dir = "XXX/log"
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 log_path = os.path.join(log_dir, 'pretrain.log')
@@ -87,7 +87,6 @@ class IGConv(nn.Module):
             1)))
         return graph.dstdata['h']
 
-# borrowed from https://github.com/dmlc/dgl/blob/306e0a46e182f3bf3bea717688ed82224c121276/examples/pytorch/han/model_hetero.py#L17
 class SemanticAttention(nn.Module):
     def __init__(self, in_size, hidden_size=128):
         super(SemanticAttention, self).__init__()
@@ -259,5 +258,5 @@ if __name__ == '__main__':
                     t, epoch, test_loss, results[0], results[1], results[2], results[3], results[4], results[5], t1-t0)
                 )
 
-    torch.save(model.state_dict(), '/home/zqxu/MHTGNN/model_save/IHG_Xinye_pretrain_params.pth')
-    torch.save(embed_table, "/home/zqxu/MHTGNN/data/embedding/IHG_Xinye_pretrain_embed.pt")
+    torch.save(model.state_dict(), 'XXX')
+    torch.save(embed_table, "XXX")

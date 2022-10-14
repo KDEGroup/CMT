@@ -17,7 +17,7 @@ from tqdm import tqdm
 import warnings
 warnings.filterwarnings("ignore")
 
-log_dir = "/home/zqxu/MHTGNN/log"
+log_dir = "XXX/log"
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 log_path = os.path.join(log_dir, 'HG.log')
@@ -163,6 +163,6 @@ if __name__ == '__main__':
         if results[0] > bestauc:
             bestepoch = epoch
             bestauc = results[0]
-            torch.save(model.state_dict(), '/home/zqxu/MHTGNN/model_save/IHG_Xinye_params.pth')
+            torch.save(model.state_dict(), 'XXX')
 
     log.record("Best Epoch[%d] Best AUC Score[%.4f]" % (bestepoch, bestauc))

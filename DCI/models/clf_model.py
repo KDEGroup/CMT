@@ -1,5 +1,5 @@
 import sys
-sys.path.append("/home/zqxu/MHTGNN/code/DCI")
+sys.path.append("XXX")
 
 import torch.nn as nn
 from layers.graphcnn import GraphCNN, GIN

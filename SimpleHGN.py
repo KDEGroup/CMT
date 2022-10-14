@@ -1,6 +1,4 @@
 import os, sys, argparse
-from tkinter.ttk import Label
-sys.path.append("/home/zqxu/MHTGNN/code/")
 
 import dgl
 import torch
@@ -17,7 +15,7 @@ from Utils import set_seed, Logging
 from Input import loadXinyeDataHetero
 from Metrics import *
 
-log_dir = "/home/zqxu/MHTGNN/log"
+log_dir = "XXX/log"
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 log_path = os.path.join(log_dir, 'SimpleHGN.log')
@@ -39,7 +37,7 @@ parser.add_argument("--lr", type=float, default=1e-3, help="Learning rate")
 parser.add_argument("--weight_decay", type=float, default=1e-2, help="Weight decay for regularization")
 parser.add_argument("--epochs", type=int, default=100, help="Epochs for training")
 parser.add_argument("--agg_room", type=str, default='mean', help="Aggregation for room feature definition")
-parser.add_argument("--path", type=str, default="/home/zqxu/MHTGNN/data/", help="Dataset path")
+parser.add_argument("--path", type=str, default="XXX/data/", help="Dataset path")
 
 args = parser.parse_args()
 log.record(args)
@@ -314,7 +312,7 @@ def run():
         if results[0] > bestauc:
             bestepoch = epoch
             bestauc = results[0]
-            torch.save(model.state_dict(), '/home/zqxu/MHTGNN/model_save/SimpleHGN_Xinye_params.pth')
+            torch.save(model.state_dict(), 'XXX')
 
     log.record("Best Epoch[%d] Best AUC Score[%.4f]" % (bestepoch, bestauc))
 

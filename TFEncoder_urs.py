@@ -20,10 +20,10 @@ from tqdm import tqdm
 import warnings
 warnings.filterwarnings("ignore")
 
-log_dir = "/home/zqxu/MHTGNN/log"
+log_dir = "XXX"
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
-log_path = os.path.join(log_dir, 'TFEncoder_rs.log')
+log_path = os.path.join(log_dir, 'TFEncoder_urs.log')
 log = Logging(log_path)
 
 parser = argparse.ArgumentParser(description='tfencoder_rs')
@@ -33,8 +33,8 @@ parser.add_argument("--batch_size", type=int, default=1024*4)
 parser.add_argument("--lr", type=float, default=1e-3, help="Learning rate")
 parser.add_argument("--weight_decay", type=float, default=1e-2, help="Weight decay for regularization")
 parser.add_argument("--epochs", type=int, default=25, help="Epochs for training")
-parser.add_argument("--path", type=str, default="/home/zqxu/MHTGNN/data/", help="Dataset path")
-parser.add_argument("--data", type=str, default="/home/zqxu/MHTGNN/data/sampled_user_seq_complete.pickle", help="Dataset path")
+parser.add_argument("--path", type=str, default="XXX", help="Dataset path")
+parser.add_argument("--data", type=str, default="XXX/sampled_user_seq_complete.pickle", help="Dataset path")
 parser.add_argument("--pos_embed", type=bool, default=False, help="Whether to use position embedding")
 
 args = parser.parse_args()
@@ -66,7 +66,7 @@ class SnapshotDataset(Dataset):
         X_test = X_test_p + X_test_n
         self.num_nodes = len(user_seq_table)
 
-        graph_data = np.load("/home/zqxu/MHTGNN/data/phase1_gdata.npz")
+        graph_data = np.load("XXX/phase1_gdata.npz")
         user_features = torch.FloatTensor(graph_data['x'])
 
         self.num_features = user_features.shape[1]
@@ -116,7 +116,7 @@ class PretrainDataset(Dataset):
             user_seq_table = pickle.load(f)
         self.seq_table = user_seq_table
         self.num_nodes = len(user_seq_table)
-        graph_data = np.load("/home/zqxu/MHTGNN/data/phase1_gdata.npz")
+        graph_data = np.load("XXX/phase1_gdata.npz")
         user_features = torch.FloatTensor(graph_data['x'])
 
         self.num_features = user_features.shape[1]
@@ -286,7 +286,7 @@ def run():
             if results[0] > bestauc:
                 bestauc = results[0]
                 bestepoch = epoch
-                torch.save(model.state_dict(), '/home/zqxu/MHTGNN/model_save/TFEncoder_rs_params.pth')
+                torch.save(model.state_dict(), 'XXX/TFEncoder_rs_params.pth')
 
             t1 = time()
             log.record("Epoch: %d, Test Loss: %.2f, AUC: %.4f, KS: %.4f, PRE: %.4f, RECALL: %.4f F1:%.4f, ACC: %.4f, Time: %.1f" % (
@@ -301,7 +301,7 @@ def generate_embed():
     pretrainset = PretrainDataset()
     pretrainloader = DataLoader(pretrainset, batch_size=32*args.batch_size, shuffle=False, drop_last=False, collate_fn=lambda x:x)
     model = TFEncoderClassifier(trainset.num_features, args.hid_dim, trainset.time_span, args.n_layers)
-    model.load_state_dict(torch.load('/home/zqxu/MHTGNN/model_save/TFEncoder_rs_params.pth'))
+    model.load_state_dict(torch.load('XXX/TFEncoder_rs_params.pth'))
     embed_table = torch.empty(pretrainset.num_nodes, args.hid_dim)
     with torch.no_grad():
         user = 0
@@ -318,7 +318,7 @@ def generate_embed():
                 user+=1
             t1 = time()
             # print("%d, %d, %d, %.2f" % (batch_id, user, pretrainset.num_nodes, t1-t0))
-    torch.save(embed_table, "/home/zqxu/MHTGNN/data/embedding/tfencoder_Xinye_rs_embed.pt")
+    torch.save(embed_table, "XXX/tfencoder_Xinye_rs_embed.pt")
 
 
 if __name__ == '__main__':

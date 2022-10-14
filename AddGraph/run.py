@@ -2,7 +2,7 @@
 import os, argparse
 import sys
 
-sys.path.append("/home/zqxu/MHTGNN/code")
+sys.path.append("XXX")
 
 from Utils import set_seed, Logging
 from Metrics import *
@@ -25,7 +25,7 @@ import torch.optim
 import warnings
 warnings.filterwarnings("ignore")
 
-log_dir = "/home/zqxu/MHTGNN/log"
+log_dir = "XXX"
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 log_path = os.path.join(log_dir, 'AddGraph_homo.log')
@@ -39,7 +39,7 @@ parser.add_argument("--lr", type=float, default=1e-3, help="Learning rate")
 parser.add_argument("--weight_decay", type=float, default=1e-2, help="Weight decay for regularization")
 parser.add_argument("--epochs", type=int, default=200, help="Epochs for training")
 parser.add_argument("--w", type=int, default=3, help="Historical windows size")
-parser.add_argument("--path", type=str, default="/home/zqxu/MHTGNN/data/", help="Dataset path")
+parser.add_argument("--path", type=str, default="XXX", help="Dataset path")
 
 args = parser.parse_args()
 log.record(args)
@@ -160,13 +160,13 @@ class GCN(nn.Module):
 def preprocess():
     train_user_idx, test_user_idx, edges = loadXinyeDataHomoDynamic()
     
-    with open("/home/zqxu/MHTGNN/data/u_train_test_Xinye.pickle", "rb") as fp:
+    with open("XXX/u_train_test_Xinye.pickle", "rb") as fp:
         X_train_p, X_train_n, X_test_p, X_test_n = pickle.load(fp)
 
     train_user_idx = X_train_p + X_train_n
     test_user_idx = X_test_p + X_test_n
 
-    graph_data = np.load("/home/zqxu/MHTGNN/data/phase1_gdata.npz")
+    graph_data = np.load("XXX/phase1_gdata.npz")
     features = graph_data['x']
     features[features==-1] = np.nan
     col_mean = np.nanmean(features, axis=0)
@@ -212,23 +212,23 @@ def preprocess():
         cached_subgraph.append(g)
         uid_sets.append(uid_set)
 
-    with open('/home/zqxu/MHTGNN/data/cached_subgraph.pickle', 'wb') as f:
+    with open('XXX/cached_subgraph.pickle', 'wb') as f:
         pickle.dump(cached_subgraph, f)
-    with open('/home/zqxu/MHTGNN/data/uid_sets.pickle', 'wb') as f:
+    with open('XXX/uid_sets.pickle', 'wb') as f:
         pickle.dump(uid_sets, f)
 
 def run():
     set_seed(42)
-    graph_data = np.load("/home/zqxu/MHTGNN/data/phase1_gdata.npz")
+    graph_data = np.load("XXX/phase1_gdata.npz")
     features = graph_data['x']
     y = graph_data['y']
     label = torch.FloatTensor(y)
     num_nodes = features.shape[0]
     num_features = features.shape[1]
     timespan = 7
-    with open('/home/zqxu/MHTGNN/data/cached_subgraph.pickle', 'rb') as f:
+    with open('XXX/cached_subgraph.pickle', 'rb') as f:
         cached_subgraph = pickle.load(f)
-    with open('/home/zqxu/MHTGNN/data/uid_sets.pickle', 'rb') as f:
+    with open('XXX/uid_sets.pickle', 'rb') as f:
         uid_sets = pickle.load(f)
 
     model = AddGraph(num_features, args.hid_dim)
