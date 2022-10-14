@@ -20,7 +20,7 @@ warnings.filterwarnings("ignore")
 log_dir = "/home/zqxu/MHTGNN/log"
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
-log_path = os.path.join(log_dir, 'IHG.log')
+log_path = os.path.join(log_dir, 'HG.log')
 log = Logging(log_path)
 
 parser = argparse.ArgumentParser(description='IG_RGCN')
@@ -52,15 +52,6 @@ class IG_RGCN(nn.Module):
             nn.Sigmoid()
         )
 
-    # def forward(self, blocks, x):
-    #     # inputs are features of nodes
-    #     x['user'] = self.embed(x['user'])
-    #     h = self.conv1(blocks[0], x)
-    #     h = {k: F.relu(v, inplace=True) for k, v in h.items()}
-    #     h = self.conv2(blocks[1], h)['user']
-    #     h = self.predict(h)
-    #     return h
-
     def forward(self, blocks, x):
         # inputs are features of nodes
         x['user'] = self.embed(x['user'])
@@ -89,7 +80,6 @@ class IGConv(nn.Module):
             1)))
         return graph.dstdata['h']
 
-# borrowed from https://github.com/dmlc/dgl/blob/306e0a46e182f3bf3bea717688ed82224c121276/examples/pytorch/han/model_hetero.py#L17
 class SemanticAttention(nn.Module):
     def __init__(self, in_size, hidden_size=128):
         super(SemanticAttention, self).__init__()
@@ -115,9 +105,6 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     criterion = nn.BCELoss(reduction='sum')
 
-    # fanouts = '5, 10'
-    # fanouts= [int(i) for i in fanouts.split(',')]
-    # sampler = dgl.dataloading.MultiLayerNeighborSampler(fanouts)
     sampler = dgl.dataloading.MultiLayerFullNeighborSampler(2)
     dataloader_train = dgl.dataloading.NodeDataLoader(hetero_graph[0], {'user': train_user_idx}, sampler, batch_size=args.batch_size, shuffle=True, drop_last=False)
     dataloader_test = dgl.dataloading.NodeDataLoader(hetero_graph[1], {'user': test_user_idx}, sampler, batch_size=args.batch_size, shuffle=False, drop_last=False)
