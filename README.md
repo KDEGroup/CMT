@@ -15,6 +15,8 @@ Download data from the competition website: [https://ai.ppdai.com/mirror/goToMir
 
 Download the raw data to a directory, and replace the corresponding directory in Input.py
 
+Update: The original download link has expired. Please download the data from: [https://dgraph.xinye.com/dataset](https://dgraph.xinye.com/dataset).
+
 ## run
 
 Before running any method below, replace the corresponding directory for storing log file and trained model file in each python file.
